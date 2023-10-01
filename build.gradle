@@ -1,0 +1,61 @@
+plugins {
+    id 'java'
+    //support Idea IDE
+    id 'idea'
+    // Build uber-jar
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
+}
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+idea {
+    project {
+        languageLevel = 17
+    }
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.google.guava:guava:30.1.1-jre'
+    implementation 'ch.qos.logback:logback-classic:1.4.11'
+    implementation 'org.apache.httpcomponents:httpcore-nio:4.4.16'
+    implementation 'commons-io:commons-io:2.13.0'
+    implementation 'org.yaml:snakeyaml:2.2'
+
+
+
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+}
+
+shadowJar {
+    archiveBaseName.set('exampleUber')
+    archiveVersion.set('0.1.0')
+    archiveClassifier.set('')
+    manifest {
+        attributes 'Main-Class': 'org.glebchanskiy.Application'
+    }
+}
+
+tasks.build.dependsOn tasks.shadowJar
+
+//print versions from BOM
+task managedVersions {
+    doLast {
+        dependencyManagement.managedVersions.each {
+            println it
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
