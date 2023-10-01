@@ -26,11 +26,12 @@ public class Middleware {
         return requestHeaders;
     }
     private Request parseRequest(String rowRequest) {
-        String[] splitedRequest = rowRequest.split("\r\n\r\n");
+        log.info("parseRequest:\n{}", rowRequest);
+        String[] splitedRequest = rowRequest.split("\\r?\\n\\r?\\n");
         String headers = splitedRequest[0];
 
 
-        String[] firstLine = headers.split("\n")[0].split(" ");
+        String[] firstLine = headers.split("\\r?\\n")[0].split(" ");
         String method = firstLine[0];
         String url = firstLine[1];
 
@@ -57,8 +58,8 @@ public class Middleware {
     }
 
     public Response process(String rowRequest) {
-        log.info("Row request:\n{}", rowRequest);
         Request request = parseRequest(rowRequest);
+        log.info("Request: {} {}", request.getMethod(), request.getUrl());
         return router.dispatch(request);
     }
 }

@@ -25,7 +25,6 @@ public class TestController implements Controller {
     @Override
     public Response get(Request request) {
         Response response;
-        log.info("/GET");
         File file = new File(
                 ClassLoader.getSystemClassLoader().getResource("static").getPath() +
                         (request.getUrl().equals("/") ? "" : request.getUrl())

@@ -10,7 +10,6 @@ import java.nio.file.Path;
 public class Application {
 
     public static void main(String... args) throws IOException, URISyntaxException {
-        Path path = Path.of(ClassLoader.getSystemClassLoader().getResource("config.yaml").toURI());
-        new Server().run(Configuration.load(path));
+        new Server().run();
     }
 }

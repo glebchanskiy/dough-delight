@@ -6,9 +6,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -17,35 +19,31 @@ import java.util.concurrent.TimeoutException;
 
 public class Server {
     private static final Logger log = LoggerFactory.getLogger(Server.class);
-
     private static final int BUFFER_SIZE = 2048;
-    private static final int  DEFAULT_PORT = 8088;
-    private static final String DEFAULT_HOSTNAME = "127.0.0.1";
-
     private Configuration configuration;
     private final Middleware middleware = new Middleware();
-    private AsynchronousServerSocketChannel server;
 
+    // Custom config
     public void run(Configuration configuration) {
         this.configuration = configuration;
         bootstrap();
     }
 
-    public void run() {
-        this.configuration = new Configuration();
-        this.configuration.setPort(DEFAULT_PORT);
-        this.configuration.setHostname(DEFAULT_HOSTNAME);
-        this.configuration.setLocation(System.getProperty("user.dir"));
+    // Use default config
+    public void run() throws URISyntaxException, IOException {
+        this.configuration = Configuration.load(
+                Path.of(ClassLoader.getSystemClassLoader()
+                        .getResource("config.yaml").toURI())
+        );
+        bootstrap();
     }
 
     private void bootstrap() {
         log.info("Server started");
-        try {
-            log.info("Configuration:\n{}", configuration);
-            server = AsynchronousServerSocketChannel.open();
+        try (var server = AsynchronousServerSocketChannel.open()) {
             server.bind(new InetSocketAddress(configuration.getHostname(), configuration.getPort()));
-            log.info("listening on {}:{}", configuration.getHostname(), configuration.getPort());
-            listen();
+            log.info("Listening [{}] on {}:{}", configuration.getLocation(), configuration.getHostname(), configuration.getPort());
+            listen(server);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (ExecutionException e) {
@@ -56,8 +54,8 @@ public class Server {
             throw new RuntimeException(e);
         }
     }
-
-    private void listen() throws ExecutionException, InterruptedException, TimeoutException, IOException {
+    @SuppressWarnings("squid:S2189")
+    private void listen(AsynchronousServerSocketChannel server) throws ExecutionException, InterruptedException, TimeoutException, IOException {
         while (true) {
             Future<AsynchronousSocketChannel> client = server.accept();
             handleClient(client);
@@ -65,16 +63,16 @@ public class Server {
     }
 
     private void handleClient(Future<AsynchronousSocketChannel> client) throws ExecutionException, InterruptedException, TimeoutException, IOException {
-        AsynchronousSocketChannel clientChannel = client.get(120, TimeUnit.SECONDS);
+        AsynchronousSocketChannel clientChannel = client.get(10, TimeUnit.MINUTES);
         if (clientChannel == null)
             return;
 
-        log.info("New client connected: {}", clientChannel.getRemoteAddress());
+        log.info("Client connected: {}", clientChannel.getRemoteAddress());
 
         while (clientChannel.isOpen()) {
             String request = readRequest(clientChannel);
+            log.info("clientChannel.isOpen()");
             Response response = middleware.process(request);
-            log.info("response: {}", response);
             writeResponse(clientChannel, response);
             clientChannel.close();
         }
@@ -99,16 +97,17 @@ public class Server {
             builder.append(new String(array));
             buffer.clear();
         }
-        log.info("builder:\n{}", builder);
         return builder.toString();
     }
 
     private void writeResponse(AsynchronousSocketChannel clientChannel, Response response) throws IOException {
-        log.info("final response: {}{}", response, response.getBinary());
+
         if (response.getBinary() == null) {
+            log.info("Response:\n{}", response);
             var packet = ByteBuffer.wrap(response.toString().getBytes());
             clientChannel.write(packet);
         } else {
+            log.info("Response:\n{}[BINARY]", response);
             var headers = ByteBuffer.wrap(response.toString().getBytes());
             var body = ByteBuffer.wrap(response.getBinary());
             clientChannel.write(headers);
