@@ -27,7 +27,7 @@ public class TestController implements Controller {
         Response response;
         log.info("/GET");
         File file = new File(
-                "/Users/glebchanskiy/subjects/aipos/dough-delight/src/main/java/org/glebchanskiy/resurces" +
+                ClassLoader.getSystemClassLoader().getResource("static").getPath() +
                         (request.getUrl().equals("/") ? "" : request.getUrl())
                         );
 

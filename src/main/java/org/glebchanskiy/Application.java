@@ -4,12 +4,13 @@ import org.glebchanskiy.doughdelight.Configuration;
 import org.glebchanskiy.doughdelight.Server;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 
 public class Application {
 
-    public static void main(String... args) throws IOException {
-        Path path = Path.of("/Users/glebchanskiy/subjects/aipos/dough-delight/src/main/java/org/glebchanskiy/config.yaml");
+    public static void main(String... args) throws IOException, URISyntaxException {
+        Path path = Path.of(ClassLoader.getSystemClassLoader().getResource("config.yaml").toURI());
         new Server().run(Configuration.load(path));
     }
 }
