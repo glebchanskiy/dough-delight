@@ -36,7 +36,7 @@ public class ShareFilesController implements Controller {
 
             if (file.isDirectory()) {
                 contentType = "text/html";
-                content = generatePageWithFilesList(file, request.getUrl());
+                content = generatePageWithFilesList(file, request.getUrl()); //image/svg+xml
             } else {
                 if (fileName.endsWith("html")) {
                     content = readFile(file);
@@ -44,6 +44,12 @@ public class ShareFilesController implements Controller {
                 } else if (fileName.endsWith("css")) {
                     content = readFile(file);
                     contentType = "text/css";
+                } else if (fileName.endsWith("svg") || fileName.endsWith("xml")) {
+                    content = readFile(file);
+                    contentType = "image/svg+xml";
+                } else if (fileName.endsWith("js")) {
+                    content = readFile(file);
+                    contentType = "text/javascript; charset=utf-8";
                 } else if (fileName.endsWith("json")) {
                     content = readFile(file);
                     contentType = "application/json";
