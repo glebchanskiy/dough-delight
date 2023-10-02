@@ -9,6 +9,11 @@ import java.util.stream.Collectors;
 
 public class ResponseHeaders extends HashMap<String, String> {
 
+    public ResponseHeaders() {
+        this.put("Access-Control-Allow-Origin", "https://google.com");
+        this.put("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    }
+
     @Override
     public String toString() {
         return this.entrySet().stream()

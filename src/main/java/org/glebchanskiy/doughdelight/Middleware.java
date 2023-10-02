@@ -1,8 +1,6 @@
 package org.glebchanskiy.doughdelight;
 
-import org.glebchanskiy.doughdelight.utils.Request;
-import org.glebchanskiy.doughdelight.utils.RequestHeaders;
-import org.glebchanskiy.doughdelight.utils.Response;
+import org.glebchanskiy.doughdelight.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +58,18 @@ public class Middleware {
     public Response process(String rowRequest) {
         Request request = parseRequest(rowRequest);
         log.info("Request: {} {}", request.getMethod(), request.getUrl());
+
+        RequestHeaders headers = request.getHeaders();
+
+
+        if (!headers.get("Host").equals("localhost:8080")) {
+            return Response.builder()
+                    .status(403)
+                    .textStatus(TextStatus.FORBIDDEN)
+                    .headers(new ResponseHeaders())
+                    .build();
+        }
+
         return router.dispatch(request);
     }
 }

@@ -1,5 +1,5 @@
 package org.glebchanskiy.doughdelight.utils;
 
 public enum TextStatus {
-    OK, ACCEPTED, BAD_REQUEST
+    OK, ACCEPTED, BAD_REQUEST, FORBIDDEN
 }
