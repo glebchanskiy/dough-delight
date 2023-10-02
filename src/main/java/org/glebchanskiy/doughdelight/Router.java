@@ -1,6 +1,6 @@
 package org.glebchanskiy.doughdelight;
 
-import org.glebchanskiy.doughdelight.controllers.TestController;
+import org.glebchanskiy.doughdelight.controllers.ShareFilesController;
 import org.glebchanskiy.doughdelight.utils.Request;
 import org.glebchanskiy.doughdelight.utils.Response;
 import org.glebchanskiy.doughdelight.utils.TextStatus;
@@ -13,7 +13,7 @@ public class Router {
 
     public Router() {
         this.controllers = new LinkedList<>();
-        controllers.add(new TestController());
+        controllers.add(new ShareFilesController());
     }
 
 

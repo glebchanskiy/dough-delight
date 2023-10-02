@@ -1,6 +1,5 @@
 package org.glebchanskiy.doughdelight.controllers;
 
-import com.google.common.io.Files;
 import org.glebchanskiy.doughdelight.Controller;
 import org.glebchanskiy.doughdelight.utils.Request;
 import org.glebchanskiy.doughdelight.utils.Response;
@@ -14,8 +13,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-public class TestController implements Controller {
-    private static final Logger log = LoggerFactory.getLogger(TestController.class);
+public class ShareFilesController implements Controller {
+    private static final Logger log = LoggerFactory.getLogger(ShareFilesController.class);
 
     @Override
     public String getMapping() {
@@ -24,46 +23,38 @@ public class TestController implements Controller {
 
     @Override
     public Response get(Request request) {
-        Response response;
-        File file = new File(
-                ClassLoader.getSystemClassLoader().getResource("static").getPath() +
-                        (request.getUrl().equals("/") ? "" : request.getUrl())
-                        );
+
 
         try {
+            File file = new File(ClassLoader.getSystemClassLoader().getResource("static").getPath() +
+                    (request.getUrl().equals("/") ? "" : request.getUrl())
+            );
             String content = null;
             byte[] binary = null;
             String contentType;
             String fileName = file.getName();
+
             if (file.isDirectory()) {
                 contentType = "text/html";
-                StringBuilder list = new StringBuilder();
-                for (var i : Objects.requireNonNull(file.listFiles())) {
-                    list.append("<a href='")
-                            .append(request.getUrl().equals("/") ? request.getUrl() : request.getUrl() + "/")
-                            .append(i.getName())
-                            .append("'>")
-                            .append(request.getUrl().equals("/") ? request.getUrl() : request.getUrl() + "/")
-                            .append(i.getName())
-                            .append("<a/>").append("<br>");
-                }
-
-                content = String.format("<html><body>%s<body/><html/>", list);
+                content = generatePageWithFilesList(file, request.getUrl());
             } else {
-
                 if (fileName.endsWith("html")) {
-                    content = com.google.common.io.Files.asCharSource(file, StandardCharsets.UTF_8).read();
+                    content = readFile(file);
                     contentType = "text/html";
-                } else if (fileName.endsWith(".json")) {
-                    content = com.google.common.io.Files.asCharSource(file, StandardCharsets.UTF_8).read();
+                } else if (fileName.endsWith("css")) {
+                    content = readFile(file);
+                    contentType = "text/css";
+                } else if (fileName.endsWith("json")) {
+                    content = readFile(file);
                     contentType = "application/json";
                 } else if (fileName.endsWith("jpg")) {
-//                    var encoder =  Base64.getEncoder();
-//                    content = encoder.encodeToString(Files.asByteSource(file).read());
-                    binary =  java.nio.file.Files.readAllBytes(file.toPath());
+                    binary = java.nio.file.Files.readAllBytes(file.toPath());
                     contentType = "image/jpeg";
+                }    else if (fileName.endsWith("mp4")) {
+                    binary =  java.nio.file.Files.readAllBytes(file.toPath());
+                    contentType = "video/mp4";
                 } else {
-                    content = com.google.common.io.Files.asCharSource(file, StandardCharsets.UTF_8).read();
+                    content = readFile(file);
                     contentType = "text/plain";
                 }
             }
@@ -73,7 +64,7 @@ public class TestController implements Controller {
             responseHeaders.put("Content-Length", Integer.toString(binary == null ? content.getBytes().length : binary.length));
             responseHeaders.put("charset", "utf-8");
 
-            response = Response.builder()
+            return Response.builder()
                     .status(200)
                     .textStatus(TextStatus.OK)
                     .headers(responseHeaders)
@@ -88,8 +79,29 @@ public class TestController implements Controller {
                     .textStatus(TextStatus.BAD_REQUEST)
                     .build();
         }
+    }
 
-        return response;
+    private String generatePageWithFilesList(File file, String link) {
+        StringBuilder fileList = new StringBuilder();
+
+        for (var f : Objects.requireNonNull(file.listFiles())) {
+            appendLink(fileList, f.getName(), link);
+        }
+        return String.format("<html><body>%s<body/><html/>", fileList);
+    }
+
+    private void appendLink(StringBuilder sb, String fileName, String link) {
+        sb.append("<a href='")
+                .append(link.equals("/") ? link : link + "/")
+                .append(fileName)
+                .append("'>")
+                .append(link.equals("/") ? link : link + "/")
+                .append(fileName)
+                .append("<a/>").append("<br>");
+    }
+
+    private String readFile(File file) throws IOException {
+        return com.google.common.io.Files.asCharSource(file, StandardCharsets.UTF_8).read();
     }
 
     @Override
