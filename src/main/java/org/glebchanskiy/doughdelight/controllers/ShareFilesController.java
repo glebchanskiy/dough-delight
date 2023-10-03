@@ -1,6 +1,8 @@
 package org.glebchanskiy.doughdelight.controllers;
 
-import org.glebchanskiy.doughdelight.Controller;
+import org.glebchanskiy.doughdelight.Configuration;
+import org.glebchanskiy.doughdelight.ConnectionsManager;
+import org.glebchanskiy.doughdelight.router.controllers.Controller;
 import org.glebchanskiy.doughdelight.utils.Request;
 import org.glebchanskiy.doughdelight.utils.Response;
 import org.glebchanskiy.doughdelight.utils.ResponseHeaders;
@@ -13,22 +15,23 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-public class ShareFilesController implements Controller {
+public class ShareFilesController extends Controller {
     private static final Logger log = LoggerFactory.getLogger(ShareFilesController.class);
+    private final String location;
 
-    @Override
-    public String getMapping() {
-        return "/";
+    public ShareFilesController(String rout, Configuration configuration) {
+        super(rout);
+        this.location = configuration.getLocation();
     }
 
     @Override
-    public Response get(Request request) {
-
-
+    public Response getMapping(Request request) {
         try {
-            File file = new File(ClassLoader.getSystemClassLoader().getResource("static").getPath() +
-                    (request.getUrl().equals("/") ? "" : request.getUrl())
-            );
+            String path = Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(location)).getPath() + (request.getUrl().equals("/") ? "" : request.getUrl());
+            log.info("PATH:{}", path);
+
+            File file = new File(path);
+
             String content = null;
             byte[] binary = null;
             String contentType;
@@ -72,20 +75,33 @@ public class ShareFilesController implements Controller {
 
             return Response.builder()
                     .status(200)
-                    .textStatus(TextStatus.OK)
+                    .textStatus("OK")
                     .headers(responseHeaders)
                     .body(content)
                     .binary(binary)
                     .build();
 
         } catch (IOException e) {
-            log.info("read ex");
             return Response.builder()
                     .status(404)
-                    .textStatus(TextStatus.BAD_REQUEST)
+                    .textStatus("Bad Request")
                     .build();
         }
     }
+
+    @Override
+    public Response postMapping(Request request) {
+        return null;
+    }
+
+    @Override
+    public Response optionsMapping(Request request) {
+        return Response.builder()
+                .status(200)
+                .textStatus("OK")
+                .build();
+    }
+
 
     private String generatePageWithFilesList(File file, String link) {
         StringBuilder fileList = new StringBuilder();
@@ -108,10 +124,5 @@ public class ShareFilesController implements Controller {
 
     private String readFile(File file) throws IOException {
         return com.google.common.io.Files.asCharSource(file, StandardCharsets.UTF_8).read();
-    }
-
-    @Override
-    public Response post(Request request) {
-        return null;
     }
 }

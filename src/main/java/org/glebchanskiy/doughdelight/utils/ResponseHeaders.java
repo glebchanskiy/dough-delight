@@ -1,8 +1,5 @@
 package org.glebchanskiy.doughdelight.utils;
 
-import lombok.Builder;
-import lombok.Data;
-
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
@@ -10,7 +7,8 @@ import java.util.stream.Collectors;
 public class ResponseHeaders extends HashMap<String, String> {
 
     public ResponseHeaders() {
-        this.put("Access-Control-Allow-Origin", "https://google.com");
+        this.put("Allow", "GET, POST, OPTIONS");
+        this.put("Access-Control-Allow-Origin", "localhost:8080");
         this.put("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     }
 

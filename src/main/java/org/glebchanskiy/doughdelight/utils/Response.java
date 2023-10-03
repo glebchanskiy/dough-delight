@@ -7,16 +7,21 @@ import lombok.Data;
 @Builder
 public class Response {
     private int status;
-    private TextStatus textStatus;
+    private String textStatus;
     private ResponseHeaders headers;
     private String body;
     private byte[] binary;
 
     @Override
     public String toString() {
-        return "HTTP/1.1 " + status + " " + textStatus.name() + "\n" +
+        return "HTTP/1.1 " + status + " " + textStatus + "\n" +
                 "Server: dough-delight\n" +
-                (headers != null ? headers : "") +
+                (headers != null ? headers : new ResponseHeaders()) +
                 "\n" + (body != null ? body : "");
     }
+
+    public static final Response NOT_FOUNDED = Response.builder()
+            .status(404)
+            .textStatus("Not Found")
+            .build();
 }

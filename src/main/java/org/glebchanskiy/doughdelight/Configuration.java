@@ -15,6 +15,7 @@ public class Configuration {
     private Integer port;
     private String hostname;
     private String location;
+    private String cors;
 
     public static Configuration load(Path path) throws IOException {
         Configuration config = new Yaml().loadAs(Files.newInputStream(path), Configuration.class);
@@ -25,6 +26,8 @@ public class Configuration {
             config.hostname = "127.0.0.1";
         if (config.location == null)
             config.location = System.getProperty("user.dir");
+        if (config.cors == null)
+            config.cors = config.hostname;
 
         return config;
     }
