@@ -1,8 +1,8 @@
 package org.glebchanskiy.doughdelight.router;
 
-import org.glebchanskiy.doughdelight.Server;
 import org.glebchanskiy.doughdelight.router.controllers.Controller;
 import org.glebchanskiy.doughdelight.router.filters.Filter;
+import org.glebchanskiy.doughdelight.router.filters.FilterRuntimeException;
 import org.glebchanskiy.doughdelight.utils.Request;
 import org.glebchanskiy.doughdelight.utils.Response;
 import org.slf4j.Logger;
@@ -41,19 +41,25 @@ public class FilterRouter {
     }
 
     public Response process(Request request) {
-        Request pureRequest = this.filter.filter(request);
-        Response response;
+        try {
+            Request pureRequest = this.filter.filter(request);
+            Response response;
 
-        for (Controller controller : this.controllers) {
-            if (pureRequest.getUrl().startsWith(controller.getRoute())) {
-                response = dispatch(controller, pureRequest);
-                if (response != null)
-                    return response;
-                else
-                    return Response.NOT_FOUNDED;
+            for (Controller controller : this.controllers) {
+                if (pureRequest.getUrl().startsWith(controller.getRoute())) {
+                    response = dispatch(controller, pureRequest);
+                    if (response != null)
+                        return response;
+                    else
+                        return Response.NOT_FOUNDED;
+                }
             }
+            return Response.NOT_FOUNDED;
+        } catch (FilterRuntimeException e) {
+            return Response.builder()
+                    .status(400)
+                    .textStatus("Bad Request")
+                    .build();
         }
-
-        return Response.NOT_FOUNDED;
     }
 }

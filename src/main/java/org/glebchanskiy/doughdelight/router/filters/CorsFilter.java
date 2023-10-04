@@ -12,7 +12,11 @@ public class CorsFilter extends Filter {
 
     @Override
     public Request filter(Request request) {
+        if (!request.getHeaders().containsKey("Host"))
+            throw new FilterRuntimeException("Required header: Host");
+
         String host = request.getHeaders().get("Host");
+
         if (!configuration.getCors().equals("*") && !host.equals(configuration.getCors())) {
             throw new FilterRuntimeException("Cross-Origin Request");
         }
