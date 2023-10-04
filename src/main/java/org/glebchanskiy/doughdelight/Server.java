@@ -9,16 +9,21 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 
 public class Server {
     private static final Logger log = LoggerFactory.getLogger("Server");
+    private static final int THREAD_POOL_SIZE = 10;
+    private final ExecutorService executorService;
     private final ConnectionsManager connectionsManager;
     private final Mapper mapper;
     private final FilterRouter router;
 
     public Server(ConnectionsManager connectionsManager, Mapper mapper, FilterRouter router) {
         this.connectionsManager = connectionsManager;
+        this.executorService = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
         this.mapper = mapper;
         this.router = router;
     }
@@ -28,6 +33,17 @@ public class Server {
         while (true) {
             try {
                 Connection connection = connectionsManager.getConnection();
+                log.info("Client connected");
+                executorService.execute(() -> handleConnection(connection));
+            } catch (ExecutionException | InterruptedException | TimeoutException | IOException e) {
+                log.warn("Error received: {}", e.getMessage());
+                throw new ServerRuntimeException(e.getMessage());
+            }
+        }
+    }
+
+    public void handleConnection(Connection connection) {
+            try {
                 log.info("Client connected");
                 long startTime = System.currentTimeMillis();
                 long duration = 3000;
@@ -60,11 +76,10 @@ public class Server {
                     }
                 }
                 log.info("Client disconnected");
-            } catch (ExecutionException | InterruptedException | TimeoutException | IOException e) {
+            } catch (ExecutionException | InterruptedException | IOException e) {
                 log.warn("Error received: {}", e.getMessage());
                 throw new ServerRuntimeException(e.getMessage());
             }
-        }
     }
 
     private boolean shouldKeepAlive(Request request) {
