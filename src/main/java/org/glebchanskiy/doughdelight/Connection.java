@@ -2,6 +2,7 @@ package org.glebchanskiy.doughdelight;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.StandardSocketOptions;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.Arrays;
@@ -21,6 +22,10 @@ public class Connection {
 
     public void close() throws IOException {
         clientChannel.close();
+    }
+
+    public void setKeepAliveOption() throws IOException {
+        clientChannel.setOption(StandardSocketOptions.SO_KEEPALIVE, true);
     }
 
     public byte[] readRequest() throws ExecutionException, InterruptedException, IOException {

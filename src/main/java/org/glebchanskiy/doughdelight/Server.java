@@ -29,19 +29,35 @@ public class Server {
             try {
                 Connection connection = connectionsManager.getConnection();
                 log.info("Client connected");
+                long startTime = System.currentTimeMillis();
+                long duration = 3000;
+                
                 while (connection.isOpen()) {
-                    log.info("Connection is open");
+                    if (System.currentTimeMillis() - startTime > duration) {
+                        connection.close();
+                        break;
+                    }
+
                     var byteRequest = connection.readRequest();
-                    log.info("Bytes read");
+
+                    if (byteRequest.length == 0)
+                        continue;
+
                     Request request = mapper.parseRequest(byteRequest);
-                    log.info("Request parsed:\n{}", request);
+                    log.info("Request: {} {}", request.getMethod(), request.getUrl());
                     Response response = router.process(request);
-                    log.info("Response received :\n{}", response);
+                    log.info("Response: {} {}", response.getStatus(), response.getTextStatus());
                     var byteResponse = mapper.toBytes(response);
-                    log.info("Response bytes received");
                     connection.writeResponse(byteResponse);
-                    log.info("Response written");
-                    connection.close();
+
+                    if (shouldKeepAlive(request)) {
+                        response.getHeaders().put("Connection", "keep-alive");
+                        connection.setKeepAliveOption();
+                        log.info("keep-alive request");
+                        duration += 3000;
+                    } else {
+                        connection.close();
+                    }
                 }
                 log.info("Client disconnected");
             } catch (ExecutionException | InterruptedException | TimeoutException | IOException e) {
@@ -49,5 +65,9 @@ public class Server {
                 throw new ServerRuntimeException(e.getMessage());
             }
         }
+    }
+
+    private boolean shouldKeepAlive(Request request) {
+        return request.getHeaders().getOrDefault("Connection", "keep-alive").equals("keep-alive");
     }
 }
