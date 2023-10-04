@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 public class Server {
-    private static final Logger log = LoggerFactory.getLogger(Server.class);
+    private static final Logger log = LoggerFactory.getLogger("Server");
     private final ConnectionsManager connectionsManager;
     private final Mapper mapper;
     private final FilterRouter router;
@@ -31,7 +31,7 @@ public class Server {
                 log.info("Client connected");
                 long startTime = System.currentTimeMillis();
                 long duration = 3000;
-                
+
                 while (connection.isOpen()) {
                     if (System.currentTimeMillis() - startTime > duration) {
                         connection.close();

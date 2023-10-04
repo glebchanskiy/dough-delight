@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class ConnectionsManager {
-    private static final Logger log = LoggerFactory.getLogger(ConnectionsManager.class);
+    private static final Logger log = LoggerFactory.getLogger("Server");
     private final AsynchronousServerSocketChannel server;
 
     public ConnectionsManager(Configuration configuration) throws IOException {

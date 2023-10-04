@@ -1,18 +1,12 @@
 package org.glebchanskiy.doughdelight.utils;
 
-import org.glebchanskiy.doughdelight.Server;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.nio.ByteBuffer;
 
 public class Mapper {
-    private static final Logger log = LoggerFactory.getLogger(Mapper.class);
     private static final String HEADER_SEPORATOR = ": ";
 
     public Request parseRequest(byte[] byteRequest) {
         String rowRequest = new String(byteRequest);
-//        log.info("rowRequest: \n{}", rowRequest);
         String rowHeaders = getRowRequestHeader(rowRequest);
         String rowBody = getRowRequestBody(rowRequest);
         return Request.builder()

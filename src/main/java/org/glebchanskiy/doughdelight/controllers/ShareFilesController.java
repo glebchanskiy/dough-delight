@@ -1,14 +1,10 @@
 package org.glebchanskiy.doughdelight.controllers;
 
 import org.glebchanskiy.doughdelight.Configuration;
-import org.glebchanskiy.doughdelight.ConnectionsManager;
 import org.glebchanskiy.doughdelight.router.controllers.Controller;
 import org.glebchanskiy.doughdelight.utils.Request;
 import org.glebchanskiy.doughdelight.utils.Response;
 import org.glebchanskiy.doughdelight.utils.ResponseHeaders;
-import org.glebchanskiy.doughdelight.utils.TextStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +12,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 public class ShareFilesController extends Controller {
-    private static final Logger log = LoggerFactory.getLogger(ShareFilesController.class);
     private final String location;
 
     public ShareFilesController(String rout, Configuration configuration) {

@@ -13,7 +13,9 @@ import java.util.Comparator;
 import java.util.List;
 
 public class FilterRouter {
-    private static final Logger log = LoggerFactory.getLogger(FilterRouter.class);
+    private static final Logger log = LoggerFactory.getLogger("ServerDetailed");
+    private static final String SEP = "------------------------------------------------";
+
     private Filter filter;
     private final List<Controller> controllers = new ArrayList<>();
     public void addFilter(Filter filter) {
@@ -41,21 +43,26 @@ public class FilterRouter {
     }
 
     public Response process(Request request) {
+        log.info("\n\nRequest:\n{}\n{}{}\n",SEP, request, SEP);
         try {
             Request pureRequest = this.filter.filter(request);
             Response response;
 
             for (Controller controller : this.controllers) {
                 if (pureRequest.getUrl().startsWith(controller.getRoute())) {
+                    log.info("Transferred to the controller route: {}", controller.getRoute());
                     response = dispatch(controller, pureRequest);
+                    log.info("\n\nResponse:\n{}\n{}\n{}\n",SEP, response, SEP);
                     if (response != null)
                         return response;
                     else
                         return Response.NOT_FOUNDED;
                 }
             }
+            log.info("Route for URL - [{}] - Not Found", request.getUrl());
             return Response.NOT_FOUNDED;
         } catch (FilterRuntimeException e) {
+            log.error("Filter Runtime Exception - [{}]", e.getMessage());
             return Response.builder()
                     .status(400)
                     .textStatus("Bad Request")

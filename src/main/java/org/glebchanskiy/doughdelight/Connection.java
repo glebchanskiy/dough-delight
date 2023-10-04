@@ -59,16 +59,3 @@ public class Connection {
         this.clientChannel.write(packet);
     }
 }
-
-//    public void writeResponse(byte[] response) {
-//        if (response.getBinary() == null) {
-//            var packet = ByteBuffer.wrap(response.toString().getBytes());
-//            this.clientChannel.write(packet);
-//        } else {
-//            var headers = ByteBuffer.wrap(response.toString().getBytes());
-//            var body = ByteBuffer.wrap(response.getBinary());
-//            this.clientChannel.write(headers);
-//            this.clientChannel.write(body);
-//        }
-//
-//    }
