@@ -12,11 +12,9 @@ public class Mapper {
 
     public Request parseRequest(byte[] byteRequest) {
         String rowRequest = new String(byteRequest);
-        log.info("Row request:\n{}", rowRequest);
+//        log.info("rowRequest: \n{}", rowRequest);
         String rowHeaders = getRowRequestHeader(rowRequest);
-        log.info("rowHeaders:\n{}", rowHeaders);
         String rowBody = getRowRequestBody(rowRequest);
-        log.info("rowBody:\n{}", rowBody);
         return Request.builder()
                 .method(getRowHeaderMethod(rowHeaders))
                 .url(getRowHeaderUrl(rowHeaders))

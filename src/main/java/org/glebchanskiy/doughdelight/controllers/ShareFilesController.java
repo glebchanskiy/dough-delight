@@ -28,7 +28,6 @@ public class ShareFilesController extends Controller {
     public Response getMapping(Request request) {
         try {
             String path = Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(location)).getPath() + (request.getUrl().equals("/") ? "" : request.getUrl());
-            log.info("PATH:{}", path);
 
             File file = new File(path);
 
