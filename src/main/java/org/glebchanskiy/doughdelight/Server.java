@@ -33,7 +33,6 @@ public class Server {
         while (true) {
             try {
                 Connection connection = connectionsManager.getConnection();
-                log.info("Client connected");
                 executorService.execute(() -> handleConnection(connection));
             } catch (ExecutionException | InterruptedException | TimeoutException | IOException e) {
                 log.warn("Error received: {}", e.getMessage());

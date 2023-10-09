@@ -1,6 +1,7 @@
 package org.glebchanskiy.doughdelight.utils;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 public class Mapper {
     private static final String HEADER_SEPORATOR = ": ";

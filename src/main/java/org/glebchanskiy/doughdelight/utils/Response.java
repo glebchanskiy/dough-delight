@@ -23,5 +23,6 @@ public class Response {
     public static final Response NOT_FOUNDED = Response.builder()
             .status(404)
             .textStatus("Not Found")
+            .headers(new ResponseHeaders())
             .build();
 }

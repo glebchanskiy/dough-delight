@@ -1,15 +1,17 @@
 package org.glebchanskiy.doughdelight;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import lombok.SneakyThrows;
+
+import java.io.*;
 import java.net.StandardSocketOptions;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.CompletionHandler;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 public class Connection {
-    private static final int BUFFER_SIZE = 2048;
+    private static final int BUFFER_SIZE = 4096;
     private final AsynchronousSocketChannel clientChannel;
 
     Connection(AsynchronousSocketChannel clientChannel) {
@@ -54,8 +56,21 @@ public class Connection {
         return outputStream.toByteArray();
     }
 
-    public void writeResponse(byte[] response) {
+    public void writeResponse(byte[] response) throws ExecutionException, InterruptedException {
         var packet = ByteBuffer.wrap(response);
-        this.clientChannel.write(packet);
+        this.clientChannel.write(packet, null, new CompletionHandler<Integer, Void>() {
+            @Override
+            public void completed(Integer bytesWritten, Void attachment) {
+                if (bytesWritten > 0 && packet.hasRemaining()) {
+                    clientChannel.write(packet, null, this);
+                }
+            }
+
+            @SneakyThrows
+            @Override
+            public void failed(Throwable exc, Void attachment) {
+                throw exc;
+            }
+        });
     }
 }

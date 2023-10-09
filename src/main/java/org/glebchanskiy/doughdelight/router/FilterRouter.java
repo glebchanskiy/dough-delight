@@ -5,6 +5,7 @@ import org.glebchanskiy.doughdelight.router.filters.Filter;
 import org.glebchanskiy.doughdelight.router.filters.FilterRuntimeException;
 import org.glebchanskiy.doughdelight.utils.Request;
 import org.glebchanskiy.doughdelight.utils.Response;
+import org.glebchanskiy.doughdelight.utils.ResponseHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +39,7 @@ public class FilterRouter {
             {return Response.builder()
                         .status(405)
                         .textStatus("Method Not Allowed")
+                        .headers(new ResponseHeaders())
                         .build();}
         }
     }
@@ -46,6 +48,7 @@ public class FilterRouter {
         log.info("\n\nRequest:\n{}\n{}{}\n",SEP, request, SEP);
         try {
             Request pureRequest = this.filter.filter(request);
+
             Response response;
 
             for (Controller controller : this.controllers) {
@@ -64,6 +67,7 @@ public class FilterRouter {
         } catch (FilterRuntimeException e) {
             log.error("Filter Runtime Exception - [{}]", e.getMessage());
             return Response.builder()
+                    .headers(new ResponseHeaders())
                     .status(400)
                     .textStatus("Bad Request")
                     .build();

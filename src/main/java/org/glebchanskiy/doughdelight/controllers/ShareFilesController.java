@@ -53,7 +53,7 @@ public class ShareFilesController extends Controller {
                 } else if (fileName.endsWith("jpg")) {
                     binary = java.nio.file.Files.readAllBytes(file.toPath());
                     contentType = "image/jpeg";
-                }    else if (fileName.endsWith("mp4")) {
+                } else if (fileName.endsWith("mp4")) {
                     binary =  java.nio.file.Files.readAllBytes(file.toPath());
                     contentType = "video/mp4";
                 } else {
@@ -64,7 +64,7 @@ public class ShareFilesController extends Controller {
 
             ResponseHeaders responseHeaders = new ResponseHeaders();
             responseHeaders.put("Content-Type", contentType);
-            responseHeaders.put("Content-Length", Integer.toString(binary == null ? content.getBytes().length : binary.length));
+            responseHeaders.put("Content-Length", Integer.toString(binary != null ?  binary.length  : content.getBytes().length));
             responseHeaders.put("charset", "utf-8");
 
             return Response.builder()
@@ -77,6 +77,7 @@ public class ShareFilesController extends Controller {
 
         } catch (IOException e) {
             return Response.builder()
+                    .headers(new ResponseHeaders())
                     .status(404)
                     .textStatus("Bad Request")
                     .build();
