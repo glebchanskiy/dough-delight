@@ -1,18 +1,18 @@
 package org.glebchanskiy;
 
-import org.glebchanskiy.doughdelight.Configuration;
-import org.glebchanskiy.doughdelight.ConnectionsManager;
-import org.glebchanskiy.doughdelight.Server;
-import org.glebchanskiy.doughdelight.controllers.ShareFilesController;
-import org.glebchanskiy.doughdelight.router.FilterRouter;
-import org.glebchanskiy.doughdelight.router.filters.CorsFilter;
-import org.glebchanskiy.doughdelight.utils.Mapper;
+import org.glebchanskiy.kek.Configuration;
+import org.glebchanskiy.kek.ConnectionsManager;
+import org.glebchanskiy.kek.Server;
+import org.glebchanskiy.kek.controllers.ShareFilesController;
+import org.glebchanskiy.kek.router.FilterRouter;
+import org.glebchanskiy.kek.router.filters.CorsFilter;
+import org.glebchanskiy.kek.utils.Mapper;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 
-public class Application {
+public class KekServer {
 
     public static void main(String... args) throws IOException, URISyntaxException {
         Path configPath = Path.of(ClassLoader.getSystemClassLoader().getResource("config.yaml").getPath());

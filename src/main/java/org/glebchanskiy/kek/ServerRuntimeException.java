@@ -1,4 +1,4 @@
-package org.glebchanskiy.doughdelight;
+package org.glebchanskiy.kek;
 
 public class ServerRuntimeException extends RuntimeException {
     public ServerRuntimeException(String msg) {

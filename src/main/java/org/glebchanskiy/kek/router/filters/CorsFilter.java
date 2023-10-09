@@ -1,7 +1,7 @@
-package org.glebchanskiy.doughdelight.router.filters;
+package org.glebchanskiy.kek.router.filters;
 
-import org.glebchanskiy.doughdelight.Configuration;
-import org.glebchanskiy.doughdelight.utils.Request;
+import org.glebchanskiy.kek.Configuration;
+import org.glebchanskiy.kek.utils.Request;
 
 public class CorsFilter extends Filter {
 

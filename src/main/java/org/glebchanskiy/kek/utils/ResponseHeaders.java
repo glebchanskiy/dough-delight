@@ -1,4 +1,4 @@
-package org.glebchanskiy.doughdelight.utils;
+package org.glebchanskiy.kek.utils;
 
 import java.util.HashMap;
 import java.util.stream.Collectors;

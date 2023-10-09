@@ -1,4 +1,4 @@
-package org.glebchanskiy.doughdelight.utils;
+package org.glebchanskiy.kek.utils;
 
 import lombok.Builder;
 import lombok.Data;

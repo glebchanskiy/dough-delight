@@ -1,4 +1,4 @@
-package org.glebchanskiy.doughdelight;
+package org.glebchanskiy.kek;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

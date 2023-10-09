@@ -1,4 +1,4 @@
-package org.glebchanskiy.doughdelight;
+package org.glebchanskiy.kek;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

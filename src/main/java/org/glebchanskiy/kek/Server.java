@@ -1,9 +1,9 @@
-package org.glebchanskiy.doughdelight;
+package org.glebchanskiy.kek;
 
-import org.glebchanskiy.doughdelight.router.FilterRouter;
-import org.glebchanskiy.doughdelight.utils.Mapper;
-import org.glebchanskiy.doughdelight.utils.Request;
-import org.glebchanskiy.doughdelight.utils.Response;
+import org.glebchanskiy.kek.router.FilterRouter;
+import org.glebchanskiy.kek.utils.Mapper;
+import org.glebchanskiy.kek.utils.Request;
+import org.glebchanskiy.kek.utils.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

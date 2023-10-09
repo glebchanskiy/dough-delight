@@ -1,7 +1,7 @@
-package org.glebchanskiy.doughdelight.router.controllers;
+package org.glebchanskiy.kek.router.controllers;
 
-import org.glebchanskiy.doughdelight.utils.Request;
-import org.glebchanskiy.doughdelight.utils.Response;
+import org.glebchanskiy.kek.utils.Request;
+import org.glebchanskiy.kek.utils.Response;
 
 public abstract class Controller {
 

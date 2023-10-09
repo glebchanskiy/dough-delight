@@ -1,10 +1,10 @@
-package org.glebchanskiy.doughdelight.controllers;
+package org.glebchanskiy.kek.controllers;
 
-import org.glebchanskiy.doughdelight.Configuration;
-import org.glebchanskiy.doughdelight.router.controllers.Controller;
-import org.glebchanskiy.doughdelight.utils.Request;
-import org.glebchanskiy.doughdelight.utils.Response;
-import org.glebchanskiy.doughdelight.utils.ResponseHeaders;
+import org.glebchanskiy.kek.Configuration;
+import org.glebchanskiy.kek.router.controllers.Controller;
+import org.glebchanskiy.kek.utils.Request;
+import org.glebchanskiy.kek.utils.Response;
+import org.glebchanskiy.kek.utils.ResponseHeaders;
 
 import java.io.File;
 import java.io.IOException;
