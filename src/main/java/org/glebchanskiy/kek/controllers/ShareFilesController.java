@@ -8,6 +8,7 @@ import org.glebchanskiy.kek.utils.ResponseHeaders;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
@@ -22,7 +23,8 @@ public class ShareFilesController extends Controller {
     @Override
     public Response getMapping(Request request) {
         try {
-            String path = Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(location)).getPath() + (request.getUrl().equals("/") ? "" : request.getUrl());
+            String url = URLDecoder.decode(request.getUrl(), StandardCharsets.UTF_8);
+            String path = location + (url.equals("/") ? "" : url);
 
             File file = new File(path);
 
@@ -33,7 +35,7 @@ public class ShareFilesController extends Controller {
 
             if (file.isDirectory()) {
                 contentType = "text/html";
-                content = generatePageWithFilesList(file, request.getUrl()); //image/svg+xml
+                content = generatePageWithFilesList(file, url);
             } else {
                 if (fileName.endsWith("html")) {
                     content = readFile(file);
@@ -50,9 +52,18 @@ public class ShareFilesController extends Controller {
                 } else if (fileName.endsWith("json")) {
                     content = readFile(file);
                     contentType = "application/json";
-                } else if (fileName.endsWith("jpg")) {
+                } else if (fileName.endsWith("jpg") || fileName.endsWith("jpeg")) {
                     binary = java.nio.file.Files.readAllBytes(file.toPath());
                     contentType = "image/jpeg";
+                } else if (fileName.endsWith("png")) {
+                    binary =  java.nio.file.Files.readAllBytes(file.toPath());
+                    contentType = "image/png";
+                } else if (fileName.endsWith("webp")) {
+                    binary =  java.nio.file.Files.readAllBytes(file.toPath());
+                    contentType = "image/webp";
+                } else if (fileName.endsWith("gif")) {
+                    binary = java.nio.file.Files.readAllBytes(file.toPath());
+                    contentType = "image/gif";
                 } else if (fileName.endsWith("mp4")) {
                     binary =  java.nio.file.Files.readAllBytes(file.toPath());
                     contentType = "video/mp4";
@@ -76,6 +87,7 @@ public class ShareFilesController extends Controller {
                     .build();
 
         } catch (IOException e) {
+            System.out.println(e.getMessage());
             return Response.builder()
                     .headers(new ResponseHeaders())
                     .status(404)
