@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -17,8 +19,28 @@ public class Configuration {
     private String location;
     private String cors;
 
-    public static Configuration load(Path path) throws IOException {
-        Configuration config = new Yaml().loadAs(Files.newInputStream(path), Configuration.class);
+    @SuppressWarnings("java:S3011")
+    public static Configuration load(Path path) throws IOException, IllegalAccessException {
+        Configuration configuration = new Yaml().loadAs(Files.newInputStream(path), Configuration.class);
+        Configuration defaultConfiguration = loadDefault();
+
+        Field[] fields = defaultConfiguration.getClass().getDeclaredFields();
+
+        for (Field field : fields) {
+            var defaultValue = field.get(defaultConfiguration);
+            var loadedValue = field.get(configuration);
+
+            if (loadedValue == null) {
+                field.set(configuration, defaultValue);
+            }
+        }
+
+        return configuration;
+    }
+
+    public static Configuration loadDefault() {
+        InputStream configFileStream = Configuration.class.getResourceAsStream("/config.yaml");
+        Configuration config = new Yaml().loadAs(configFileStream, Configuration.class);
 
         if (config.port == null)
             config.port = 80;
@@ -36,6 +58,7 @@ public class Configuration {
     public String toString() {
         return "\nport: " + port  + '\n' +
                 "hostname: " + hostname + '\n' +
-                "location: " + location + '\n';
+                "location: " + location + '\n' +
+                "cors: " + cors + '\n';
     }
 }

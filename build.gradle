@@ -29,6 +29,7 @@ dependencies {
     implementation 'org.apache.httpcomponents:httpcore-nio:4.4.16'
     implementation 'commons-io:commons-io:2.13.0'
     implementation 'org.yaml:snakeyaml:2.2'
+    implementation 'args4j:args4j:2.33'
 
 
 
@@ -41,7 +42,7 @@ shadowJar {
     archiveVersion.set('0.1.0')
     archiveClassifier.set('')
     manifest {
-        attributes 'Main-Class': 'org.glebchanskiy.Application'
+        attributes 'Main-Class': 'org.glebchanskiy.KekServer'
     }
 }
 

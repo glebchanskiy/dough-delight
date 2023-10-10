@@ -18,7 +18,7 @@ public class ConnectionsManager {
         this.server = AsynchronousServerSocketChannel.open();
         server.bind(new InetSocketAddress(configuration.getHostname(), configuration.getPort()));
         log.info("Server started");
-        log.info("Listening [{}] on {}:{}", configuration.getLocation(), configuration.getHostname(), configuration.getPort());
+        log.info("Listening on {}:{}\n[{}]", configuration.getHostname(), configuration.getPort(), configuration.getLocation());
     }
 
     public Connection getConnection() throws ExecutionException, InterruptedException, TimeoutException, IOException {
