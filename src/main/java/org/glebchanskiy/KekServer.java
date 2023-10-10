@@ -21,6 +21,18 @@ public class KekServer {
         @Option(name = "-c", aliases = "--config",
                 usage = "Configuration path", metaVar = "config")
         public String configPath;
+
+        @Option(name = "-p", aliases = "--port",
+                usage = "Port", metaVar = "port")
+        public Integer port;
+
+        @Option(name = "-l", aliases = "--location",
+                usage = "Work directory", metaVar = "location")
+        public String location;
+
+        @Option(name = "-a", aliases = "--cors",
+                usage = "Set cors hostname", metaVar = "cors")
+        public String cors;
     }
 
     public static void main(String... args) throws IOException, IllegalAccessException {
@@ -35,6 +47,15 @@ public class KekServer {
                 config = Configuration.load(Path.of(options.configPath));
             } else {
                 config = Configuration.loadDefault();
+            }
+            if (options.port != null) {
+                config.setPort(options.port);
+            }
+            if (options.location != null) {
+                config.setLocation(options.location);
+            }
+            if (options.cors != null) {
+                config.setCors(options.cors);
             }
         } catch (CmdLineException ignored) {
             parser.printUsage(System.out);
