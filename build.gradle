@@ -39,7 +39,6 @@ dependencies {
 
 shadowJar {
     archiveBaseName.set('kek-server')
-    archiveVersion.set('0.1.0')
     archiveClassifier.set('')
     manifest {
         attributes 'Main-Class': 'org.glebchanskiy.KekServer'

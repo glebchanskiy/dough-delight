@@ -24,7 +24,7 @@ Kek - simple HTTP server
 4. Run the server:
 
     ```
-    java -jar build/libs/kek-server-0.1.0.jar
+    java -jar build/libs/kek-server.jar
     ```
 
 
@@ -52,7 +52,7 @@ You can override the configuration and pass the path using the -config argument.
 1. Example:
 
     ```
-    java -jar build/libs/kek-server-0.1.0.jar
+    java -jar build/libs/kek-server.jar
     ```
 
    Running the server with the default configuration. The work directory is the directory in which the user runs the server. The port number is set to 8080.
@@ -60,7 +60,7 @@ You can override the configuration and pass the path using the -config argument.
 2. Example:
 
     ```
-    java -jar build/libs/kek-server-0.1.0.jar --config path/to/config.yml
+    java -jar build/libs/kek-server.jar --config path/to/config.yml
     ```
 
    Running the server with custom configuration.
@@ -68,7 +68,7 @@ You can override the configuration and pass the path using the -config argument.
 3. Example:
 
     ```
-    java -jar build/libs/kek-server-0.1.0.jar -p 8090 -l ~/Documents --cors localhost:8090
+    java -jar build/libs/kek-server.jar -p 8090 -l ~/Documents --cors localhost:8090
     ```
 
    Configure the server using command line arguments.
