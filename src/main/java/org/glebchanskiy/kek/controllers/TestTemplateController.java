@@ -26,7 +26,8 @@ public class TestTemplateController extends TemplateController {
         List<User> users = new ArrayList<>(List.of(
                 new User("Jotaro"),
                 new User("Dio"),
-                new User("Pournalef")
+                new User("Pournalef"),
+                new User("Glebas")
         ));
 
         model.put("users", users);
