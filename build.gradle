@@ -1,13 +1,26 @@
 plugins {
-    id 'java'
-    //support Idea IDE
+    id 'java-library'
+    id 'maven-publish'
     id 'idea'
-    // Build uber-jar
     id 'com.github.johnrengelman.shadow' version '7.0.0'
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId 'org.glebchanskiy'
+            artifactId 'kek'
+            version '0.1.1'
+            from components.java
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
+}
 
 idea {
     project {
@@ -31,30 +44,12 @@ dependencies {
     implementation 'org.yaml:snakeyaml:2.2'
     implementation 'args4j:args4j:2.33'
 
-
-
     compileOnly 'org.projectlombok:lombok:1.18.30'
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
 }
 
-shadowJar {
-    archiveBaseName.set('kek-server')
-    archiveClassifier.set('')
-    manifest {
-        attributes 'Main-Class': 'org.glebchanskiy.KekServer'
-    }
-}
 
 tasks.build.dependsOn tasks.shadowJar
-
-//print versions from BOM
-task managedVersions {
-    doLast {
-        dependencyManagement.managedVersions.each {
-            println it
-        }
-    }
-}
 
 test {
     useJUnitPlatform()

@@ -1,6 +1,5 @@
 package org.glebchanskiy;
 
-import com.google.common.io.Files;
 import org.glebchanskiy.kek.Configuration;
 import org.glebchanskiy.kek.ConnectionsManager;
 import org.glebchanskiy.kek.Server;
@@ -8,93 +7,30 @@ import org.glebchanskiy.kek.controllers.ShareFilesController;
 import org.glebchanskiy.kek.controllers.TestTemplateController;
 import org.glebchanskiy.kek.router.FilterRouter;
 import org.glebchanskiy.kek.router.filters.CorsFilter;
-import org.glebchanskiy.kek.templater.Model;
-import org.glebchanskiy.kek.templater.Templater;
 import org.glebchanskiy.kek.utils.Mapper;
-import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
-import org.kohsuke.args4j.Option;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
+import java.util.concurrent.Executors;
 
 public class KekServer {
 
-    static class Options {
 
-        @Option(name = "-c", aliases = "--config",
-                usage = "Configuration path", metaVar = "config")
-        public String configPath;
+    public static void main(String... args)  {
 
-        @Option(name = "-p", aliases = "--port",
-                usage = "Port", metaVar = "port")
-        public Integer port;
-
-        @Option(name = "-l", aliases = "--location",
-                usage = "Work directory", metaVar = "location")
-        public String location;
-
-        @Option(name = "-a", aliases = "--cors",
-                usage = "Set cors hostname", metaVar = "cors")
-        public String cors;
-    }
-
-    public static void main(String... args) throws IOException, IllegalAccessException {
-
-//        Model model = new Model();
-//        Templater templater = new Templater(model);
-//
-//        var file = new File("/Users/glebchanskiy/subjects/aipos/dough-delight/src/main/resources/static/landing.html");
-//        String page = Files.asCharSource(file, StandardCharsets.UTF_8).read();
-//        String result = templater.template(page);
-//        System.out.println(result);
-
-
-        var options = new Options();
-        var parser = new CmdLineParser(options);
-        Configuration config = null;
-
-        try {
-            parser.parseArgument(args);
-            if (options.configPath != null) {
-                config = Configuration.load(Path.of(options.configPath));
-            } else {
-                config = Configuration.loadDefault();
-            }
-            if (options.port != null) {
-                config.setPort(options.port);
-            }
-            if (options.location != null) {
-                config.setLocation(options.location);
-            }
-            if (options.cors != null) {
-                config.setCors(options.cors);
-            }
-        } catch (CmdLineException ignored) {
-            parser.printUsage(System.out);
-            return;
-        }
+        var config = Configuration.parseArgs(args);
 
         System.out.println("[configuration]:" + config);
-        bootstrap(config);
-    }
-
-    private static void bootstrap(Configuration configuration) throws IOException {
-        var connectionsManager = new ConnectionsManager(configuration);
-
-        var mapper = new Mapper();
-
         var router = new FilterRouter();
-        router.addFilter(new CorsFilter(configuration));
-        router.addController(new ShareFilesController("/", configuration));
+        router.addFilter(new CorsFilter(config));
+        router.addController(new ShareFilesController("/", config));
         router.addController(new TestTemplateController("/cheburek"));
 
-        new Server(
-                connectionsManager,
-                mapper,
-                router
-        ).run();
+        var server = Server.builder()
+                .connectionsManager(new ConnectionsManager(config))
+                .executorService(Executors.newFixedThreadPool(10))
+                .mapper(new Mapper())
+                .router(router)
+                .build();
+
+        server.run();
+
     }
 }
