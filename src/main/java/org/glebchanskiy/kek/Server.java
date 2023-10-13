@@ -1,5 +1,6 @@
 package org.glebchanskiy.kek;
 
+import lombok.Builder;
 import org.glebchanskiy.kek.router.FilterRouter;
 import org.glebchanskiy.kek.utils.Mapper;
 import org.glebchanskiy.kek.utils.Request;
@@ -10,10 +11,11 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 
+@Builder
 public class Server {
+    @Builder.Default
     private static final Logger log = LoggerFactory.getLogger("Server");
     private static final int THREAD_POOL_SIZE = 10;
     private final ExecutorService executorService;
@@ -21,12 +23,6 @@ public class Server {
     private final Mapper mapper;
     private final FilterRouter router;
 
-    public Server(ConnectionsManager connectionsManager, Mapper mapper, FilterRouter router) {
-        this.connectionsManager = connectionsManager;
-        this.executorService = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
-        this.mapper = mapper;
-        this.router = router;
-    }
 
     @SuppressWarnings("squid:S2189")
     public void run() {
@@ -65,7 +61,7 @@ public class Server {
                     var byteResponse = mapper.toBytes(response);
                     connection.writeResponse(byteResponse);
 
-                    if (shouldKeepAlive(request)) {
+                    if (shouldKeepAlive(request) && response.getStatus() < 300) {
                         response.getHeaders().put("Connection", "keep-alive");
                         connection.setKeepAliveOption();
                         log.info("keep-alive request");

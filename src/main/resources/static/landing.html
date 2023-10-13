@@ -4,13 +4,19 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Привет, мир!</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="/style.css">
 </head>
 <body>
 <div class="header">
     <h1 class="title">Добро пожаловать на нашу страницу!</h1>
     <p class="subtitle">Мы предлагаем лучшие услуги для вас</p>
     <a href="#" class="cta-button">Узнать больше</a>
+
+    <span>Users:</span>
+    <ul>
+        {for user in model.users : {<li>{user.username}</li>}}
+    </ul>
+
 </div>
 
 <img src="/CpSdCQXZBBA.jpg" alt="kek">
@@ -21,6 +27,6 @@
 <div class="footer">
     <p>© 2022 Все права защищены</p>
 </div>
-<script type="text/javascript" src="main.js"></script>
+<script type="text/javascript" src="/main.js"></script>
 </body>
 </html>
