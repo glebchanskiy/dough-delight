@@ -65,7 +65,7 @@ public class Server {
                     var byteResponse = mapper.toBytes(response);
                     connection.writeResponse(byteResponse);
 
-                    if (shouldKeepAlive(request)) {
+                    if (shouldKeepAlive(request) && response.getStatus() < 300) {
                         response.getHeaders().put("Connection", "keep-alive");
                         connection.setKeepAliveOption();
                         log.info("keep-alive request");
