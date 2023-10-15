@@ -19,7 +19,7 @@ public class ConnectionsManager {
             this.server = AsynchronousServerSocketChannel.open();
             server.bind(new InetSocketAddress(configuration.getHostname(), configuration.getPort()));
             log.info("Server started");
-            log.info("Listening on {}:{}\n[{}]", configuration.getHostname(), configuration.getPort(), configuration.getLocation());
+            log.info("Listening on {}:{}\nwork dir: [{}]", configuration.getHostname(), configuration.getPort(), configuration.getLocation());
         } catch (IOException e) {
             throw new ServerRuntimeException("Unable open asynchronous server socket channel.");
         }

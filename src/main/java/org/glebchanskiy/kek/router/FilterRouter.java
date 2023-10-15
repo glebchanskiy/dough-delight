@@ -1,5 +1,6 @@
 package org.glebchanskiy.kek.router;
 
+import com.google.common.io.Files;
 import org.glebchanskiy.kek.Configuration;
 import org.glebchanskiy.kek.router.controllers.AbstractController;
 import org.glebchanskiy.kek.router.controllers.Controller;
@@ -14,6 +15,7 @@ import org.glebchanskiy.kek.utils.ResponseHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -28,6 +30,12 @@ public class FilterRouter {
     private Filter filter;
     private Templater templater = new Templater(new Model());
     private final List<AbstractController> controllers = new ArrayList<>();
+    private final Configuration configuration;
+
+    public FilterRouter(Configuration config) {
+        this.configuration = config;
+    }
+
     public void addFilter(Filter filter) {
         if (this.filter != null)
             this.filter.addNext(filter);
@@ -49,20 +57,29 @@ public class FilterRouter {
         return null;
     }
 
+    private InputStream getPageInputStream(String path) {
+        InputStream pageStream = Configuration.class.getResourceAsStream(path);
+        if (pageStream == null) {
+            try {
+                pageStream = Files.asByteSource(new File(path)).openStream();
+            } catch (IOException ignored) {}
+        }
+        return pageStream;
+    }
+
     private Response dispatchTemplateController(TemplateController controller, Request request) {
         log.info("dispatchTemplateController");
         String page = controller.getMapping(templater.getModel(), request);
         String content = null;
-        InputStream pageStream = Configuration.class.getResourceAsStream("/static" + page);
+
+        InputStream pageStream = getPageInputStream(configuration.getLocation() + page);
+
         if (page == null || pageStream == null) {
-            log.info("page - {}", page);
-            log.info("pageStream - {}", pageStream);
             return null;
         }
 
         try {
             content = new String(pageStream.readAllBytes(), StandardCharsets.UTF_8);
-
             content = templater.template(content);
         } catch (IOException ignored) { return null;}
 
@@ -75,7 +92,6 @@ public class FilterRouter {
                 .headers(responseHeaders)
                 .body(content)
                 .build();
-
     }
 
     private Response dispatchController(Controller controller, Request request) {

@@ -2,7 +2,6 @@ package org.glebchanskiy.kek;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.glebchanskiy.KekServer;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
