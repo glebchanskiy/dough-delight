@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 public class LoopPattern extends AbstractPattern {
 
     public LoopPattern(Model model) {
-        super(model, Pattern.compile("\\{for (\\w+) in model\\.(\\w+) : (\\{.+\\})\\}"));
+        super(model, Pattern.compile("\\{for (\\w+) in (\\w+) : (\\{.+\\})\\}"));
     }
 
     @Override
