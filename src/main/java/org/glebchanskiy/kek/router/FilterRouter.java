@@ -69,7 +69,15 @@ public class FilterRouter {
 
     private Response dispatchTemplateController(TemplateController controller, Request request) {
         log.info("dispatchTemplateController");
-        String page = controller.getMapping(templater.getModel(), request);
+        String page;
+        if  (request.getMethod().equals("GET"))
+            page = controller.getMapping(templater.getModel(), request);
+        else if (request.getMethod().equals("POST")) {
+            page = controller.postMapping(templater.getModel(), request);
+        } else {
+            return null;
+        }
+
         String content = null;
 
         InputStream pageStream = getPageInputStream(configuration.getLocation() + page);

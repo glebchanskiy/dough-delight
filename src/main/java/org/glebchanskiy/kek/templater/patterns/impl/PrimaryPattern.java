@@ -8,16 +8,26 @@ import java.util.regex.Pattern;
 public class PrimaryPattern extends AbstractPattern {
 
     public PrimaryPattern(Model model) {
-        super(model, Pattern.compile("\\{.*\\{(.+)\\}.*}"));
+        super(model, Pattern.compile("\\{(.+?)\\}"));
     }
 
     @Override
     public String transform() {
+
         String rowObject = matcher.group(1);
         String result = getStringifyValue(rowObject);
+        result = matcher.group().replace("{" + matcher.group(1) + "}", result);
 
-        result = matcher.group().replace('{' + matcher.group(1) + '}', result);
-        return result.substring(1, result.length() - 1);
+        String finaly = expression.replaceFirst("\\{" + rowObject + "\\}", result);
+
+        while (matcher.find()) {
+            rowObject = matcher.group(1);
+            result = getStringifyValue(rowObject);
+            result = matcher.group().replace("{" + matcher.group(1) + "}", result);
+
+            finaly = finaly.replaceFirst("\\{" + rowObject + "\\}", result);
+        }
+        return finaly;
     }
 
     private String getStringifyValue(String objectName) {

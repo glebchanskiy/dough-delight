@@ -11,4 +11,7 @@ public abstract class TemplateController extends AbstractController {
     public String getMapping(Model model, Request request) {
         return null;
     }
+    public String postMapping(Model model, Request request) {
+        return null;
+    }
 }

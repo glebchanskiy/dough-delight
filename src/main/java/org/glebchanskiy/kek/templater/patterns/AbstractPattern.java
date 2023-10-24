@@ -8,9 +8,10 @@ import java.util.regex.Pattern;
 
 public abstract class AbstractPattern {
 
-    private final Pattern pattern;
+    protected final Pattern pattern;
     protected Matcher matcher;
     protected final Model model;
+    protected String expression;
 
     protected AbstractPattern(Model model, Pattern pattern) {
         this.model = model;
@@ -20,6 +21,7 @@ public abstract class AbstractPattern {
     public abstract String transform();
 
     public Matcher matcher(String expression) {
+        this.expression = expression;
         this.matcher = pattern.matcher(expression);
         return this.matcher;
     }

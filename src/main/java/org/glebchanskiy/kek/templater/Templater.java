@@ -27,14 +27,14 @@ public class Templater {
     private String transform(String expression) {
         System.out.println("EXPRESSION -> [" + expression + "]");
 
-        int minIndex = Integer.MAX_VALUE;
+        int minIndex = Integer.MIN_VALUE;
         AbstractPattern currentPattern = null;
 
         for (var pattern : patternList) {
             Matcher matcher = pattern.matcher(expression);
 
-            if (matcher.find() && minIndex > matcher.start()) {
-                minIndex = matcher.start();
+            if (matcher.find() && minIndex < matcher.group().length()) {
+                minIndex = matcher.group().length();
                 currentPattern = pattern;
             }
         }
@@ -45,12 +45,7 @@ public class Templater {
     }
 
     private String transformIfExpression(String line) {
-        String searchLine = line.trim();
-        if (searchLine.startsWith("{") && searchLine.endsWith("}")) {
-            return transform(line);
-        } else {
-            return line;
-        }
+        return transform(line);
     }
 
     public String template(String template) {
@@ -64,7 +59,6 @@ public class Templater {
         for (String line : splitByLines(template)) {
             content.append(transformIfExpression(line)).append('\n');
         }
-
         return content.toString();
     }
 
@@ -72,8 +66,3 @@ public class Templater {
         return IOUtils.readLines(new StringReader(template));
     }
 }
-
-//    private final Pattern loopPattern = Pattern.compile("\\{for (\\w+) in model\\.(\\w+) : (\\{.+\\})\\}");
-//    private final Pattern ternaryPatter = Pattern.compile("\\{(\\w+) \\? (\\{.+\\}) : (\\{.+\\}\\})");
-//    private final Pattern unaryPatter = Pattern.compile("\\{(\\w+) && (\\{.+\\}\\})");
-//    private final Pattern simplePatter = Pattern.compile("\\{.*\\{(.+)\\}.*}");
