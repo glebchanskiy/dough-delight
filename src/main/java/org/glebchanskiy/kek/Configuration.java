@@ -16,6 +16,31 @@ import java.nio.file.Path;
 @Data
 @NoArgsConstructor
 public class Configuration {
+
+    private static Configuration INSTANCE;
+
+    public static Configuration getInstance() {
+        if (INSTANCE == null)
+            INSTANCE = loadDefault();
+
+        return INSTANCE;
+    }
+
+    public static Configuration getInstance(Path path) throws IOException, IllegalAccessException {
+        if (INSTANCE == null)
+            INSTANCE = load(path);
+
+        return INSTANCE;
+    }
+
+    public static Configuration getInstance(String... args) {
+        if (INSTANCE == null) {
+            INSTANCE = parseArgs(args);
+        }
+
+        return INSTANCE;
+    }
+
     static class Options {
         @Option(name = "-c", aliases = "--config",
                 usage = "Configuration path", metaVar = "config")

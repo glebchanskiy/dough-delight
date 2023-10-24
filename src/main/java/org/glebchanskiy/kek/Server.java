@@ -1,7 +1,10 @@
 package org.glebchanskiy.kek;
 
 import lombok.Builder;
-import org.glebchanskiy.kek.router.FilterRouter;
+//import org.glebchanskiy.kek.router.FilterRouter;
+import org.glebchanskiy.kek.router.Router;
+import org.glebchanskiy.kek.router.filters.Filter;
+import org.glebchanskiy.kek.router.filters.FilterRuntimeException;
 import org.glebchanskiy.kek.utils.Mapper;
 import org.glebchanskiy.kek.utils.Request;
 import org.glebchanskiy.kek.utils.Response;
@@ -21,7 +24,10 @@ public class Server {
     private final ExecutorService executorService;
     private final ConnectionsManager connectionsManager;
     private final Mapper mapper;
-    private final FilterRouter router;
+//    private final FilterRouter router;
+    private final Router router;
+
+    private Filter filter;
 
 
     @SuppressWarnings("squid:S2189")
@@ -56,7 +62,9 @@ public class Server {
 
                     Request request = mapper.parseRequest(byteRequest);
                     log.info("Request: {} {}", request.getMethod(), request.getUrl());
-                    Response response = router.process(request);
+//                    Response response = router.process(request);
+                    request = filter.filter(request);
+                    Response response = router.route(request);
                     log.info("Response: {} {}", response.getStatus(), response.getTextStatus());
                     var byteResponse = mapper.toBytes(response);
                     connection.writeResponse(byteResponse);
@@ -71,7 +79,7 @@ public class Server {
                     }
                 }
                 log.info("Client disconnected");
-            } catch (ExecutionException | InterruptedException | IOException e) {
+            } catch (ExecutionException | InterruptedException | IOException | FilterRuntimeException e) {
                 log.warn("Error received: {}", e.getMessage());
                 throw new ServerRuntimeException(e.getMessage());
             }

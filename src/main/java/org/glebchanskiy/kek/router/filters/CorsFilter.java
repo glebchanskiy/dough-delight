@@ -5,10 +5,7 @@ import org.glebchanskiy.kek.utils.Request;
 
 public class CorsFilter extends Filter {
 
-    private final Configuration configuration;
-    public CorsFilter(Configuration configuration) {
-        this.configuration = configuration;
-    }
+    private final Configuration configuration = Configuration.getInstance();
 
     @Override
     public Request filter(Request request) {

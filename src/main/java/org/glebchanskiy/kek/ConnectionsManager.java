@@ -14,7 +14,9 @@ public class ConnectionsManager {
     private static final Logger log = LoggerFactory.getLogger("Server");
     private final AsynchronousServerSocketChannel server;
 
-    public ConnectionsManager(Configuration configuration) {
+    private final Configuration configuration = Configuration.getInstance();
+
+    public ConnectionsManager() {
         try {
             this.server = AsynchronousServerSocketChannel.open();
             server.bind(new InetSocketAddress(configuration.getHostname(), configuration.getPort()));
