@@ -32,10 +32,8 @@ public class PrimaryPattern extends AbstractPattern {
 
     private String getStringifyValue(String objectName) {
         String result = null;
-        System.out.println("objectName: " + objectName);
         String[] splitedVariable = objectName.split("\\.");
         if (splitedVariable.length > 1) {
-            System.out.println("split");
             try {
                 Object variable = model.get(splitedVariable[0]);
                 var field = variable.getClass().getDeclaredField(splitedVariable[1]);
@@ -48,7 +46,6 @@ public class PrimaryPattern extends AbstractPattern {
                 result = variable.toString();
             }
         }
-        System.out.println("result: " + result);
         return result == null ? "null" : result;
     }
 }

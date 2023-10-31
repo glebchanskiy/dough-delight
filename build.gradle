@@ -43,6 +43,8 @@ dependencies {
     implementation 'commons-io:commons-io:2.13.0'
     implementation 'org.yaml:snakeyaml:2.2'
     implementation 'args4j:args4j:2.33'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+
 
     compileOnly 'org.projectlombok:lombok:1.18.30'
     annotationProcessor 'org.projectlombok:lombok:1.18.30'

@@ -17,6 +17,14 @@ public abstract class Controller extends AbstractController {
         return null;
     }
 
+    public Response deleteMapping(Request request) {
+        return null;
+    }
+
+    public Response updateMapping(Request request) {
+        return null;
+    }
+
     public Response optionsMapping(Request request) {
         return null;
     }

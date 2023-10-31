@@ -29,6 +29,7 @@ public class Router {
         for (var controller : controllers) {
             if (rightRoute(controller, request.getUrl())) {
                 response = dispatchMethod(controller, request);
+                break;
             }
         }
         if (response == null)
@@ -42,6 +43,8 @@ public class Router {
         switch (request.getMethod()) {
             case "GET" -> {return controller.getMapping(request);}
             case "POST" ->  {return controller.postMapping(request);}
+            case "UPDATE" ->  {return controller.updateMapping(request);}
+            case "DELETE" ->  {return controller.deleteMapping(request);}
             case "OPTIONS" -> {return controller.optionsMapping(request);}
             default ->
             {return Response.builder()
@@ -54,13 +57,17 @@ public class Router {
 
     private boolean rightRoute(AbstractController controller, String route) {
         int i = 0;
+
+        if (controller.getRoute().endsWith("*"))
+            return route.startsWith(controller.getRoute().substring(0, controller.getRoute().length()-1));
+
         while (i < route.length()) {
-            if (route.charAt(i) == '&')
-                break;
-            else
-                i++;
+            if (route.charAt(i) == '?') {
+                return controller.getRoute().equals(route.substring(0, i - 1));
+            }
+
+            i++;
         }
-        System.out.println("rightRoute : " + route.substring(0, i));
-        return controller.getRoute().equals(route.substring(0, i));
+        return controller.getRoute().equals(route);
     }
 }

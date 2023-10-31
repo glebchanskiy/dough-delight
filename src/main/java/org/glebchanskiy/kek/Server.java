@@ -1,7 +1,6 @@
 package org.glebchanskiy.kek;
 
 import lombok.Builder;
-//import org.glebchanskiy.kek.router.FilterRouter;
 import org.glebchanskiy.kek.router.Router;
 import org.glebchanskiy.kek.router.filters.Filter;
 import org.glebchanskiy.kek.router.filters.FilterRuntimeException;
@@ -24,7 +23,6 @@ public class Server {
     private final ExecutorService executorService;
     private final ConnectionsManager connectionsManager;
     private final Mapper mapper;
-//    private final FilterRouter router;
     private final Router router;
 
     private Filter filter;
@@ -44,40 +42,18 @@ public class Server {
     }
 
     public void handleConnection(Connection connection) {
-            try {
+            try (connection) {
                 log.info("Client connected");
-                long startTime = System.currentTimeMillis();
-                long duration = 3000;
 
-                while (connection.isOpen()) {
-                    if (System.currentTimeMillis() - startTime > duration) {
-                        connection.close();
-                        break;
-                    }
+                var byteRequest = connection.readRequest();
 
-                    var byteRequest = connection.readRequest();
-
-                    if (byteRequest.length == 0)
-                        continue;
-
-                    Request request = mapper.parseRequest(byteRequest);
-                    log.info("Request: {} {}", request.getMethod(), request.getUrl());
-//                    Response response = router.process(request);
-                    request = filter.filter(request);
-                    Response response = router.route(request);
-                    log.info("Response: {} {}", response.getStatus(), response.getTextStatus());
-                    var byteResponse = mapper.toBytes(response);
-                    connection.writeResponse(byteResponse);
-
-                    if (shouldKeepAlive(request) && response.getStatus() < 300) {
-                        response.getHeaders().put("Connection", "keep-alive");
-                        connection.setKeepAliveOption();
-                        log.info("keep-alive request");
-                        duration += 3000;
-                    } else {
-                        connection.close();
-                    }
-                }
+                Request request = mapper.parseRequest(byteRequest);
+                log.info("Request: {} {}", request.getMethod(), request.getUrl());
+                request = filter.filter(request);
+                Response response = router.route(request);
+                log.info("Response: {} {}", response.getStatus(), response.getTextStatus());
+                var byteResponse = mapper.toBytes(response);
+                connection.writeResponse(byteResponse);
                 log.info("Client disconnected");
             } catch (ExecutionException | InterruptedException | IOException | FilterRuntimeException e) {
                 log.warn("Error received: {}", e.getMessage());
@@ -85,7 +61,7 @@ public class Server {
             }
     }
 
-    private boolean shouldKeepAlive(Request request) {
-        return request.getHeaders().getOrDefault("Connection", "keep-alive").equals("keep-alive");
-    }
+//    private boolean shouldKeepAlive(Request request) {
+//        return request.getHeaders().getOrDefault("Connection", "keep-alive").equals("keep-alive");
+//    }
 }

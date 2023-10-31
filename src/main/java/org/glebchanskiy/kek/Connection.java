@@ -10,7 +10,7 @@ import java.nio.channels.CompletionHandler;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
-public class Connection {
+public class Connection implements AutoCloseable {
     private static final int BUFFER_SIZE = 4096;
     private final AsynchronousSocketChannel clientChannel;
 
@@ -27,7 +27,7 @@ public class Connection {
     }
 
     public void setKeepAliveOption() throws IOException {
-        clientChannel.setOption(StandardSocketOptions.SO_KEEPALIVE, true);
+//        clientChannel.setOption(StandardSocketOptions.SO_KEEPALIVE, true);
     }
 
     public byte[] readRequest() throws ExecutionException, InterruptedException, IOException {

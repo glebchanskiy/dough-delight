@@ -17,12 +17,14 @@ public class ConnectionsManager {
     private final Configuration configuration = Configuration.getInstance();
 
     public ConnectionsManager() {
+
         try {
             this.server = AsynchronousServerSocketChannel.open();
-            server.bind(new InetSocketAddress(configuration.getHostname(), configuration.getPort()));
+            server.bind(new InetSocketAddress(configuration.getPort()));
             log.info("Server started");
             log.info("Listening on {}:{}\nwork dir: [{}]", configuration.getHostname(), configuration.getPort(), configuration.getLocation());
         } catch (IOException e) {
+            System.out.println(e.getMessage());
             throw new ServerRuntimeException("Unable open asynchronous server socket channel.");
         }
     }

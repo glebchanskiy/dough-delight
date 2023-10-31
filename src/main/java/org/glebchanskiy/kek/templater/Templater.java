@@ -25,7 +25,7 @@ public class Templater {
     }
 
     private String transform(String expression) {
-        System.out.println("EXPRESSION -> [" + expression + "]");
+//        System.out.println("EXPRESSION -> [" + expression + "]");
 
         int minIndex = Integer.MIN_VALUE;
         AbstractPattern currentPattern = null;
